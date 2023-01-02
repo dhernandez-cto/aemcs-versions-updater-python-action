@@ -1,0 +1,38 @@
+name: 'Versions updater'
+description: 'Adobe Enterprise Manager Content Server full stack versions file updater'
+inputs:
+  output-file:
+    description: 'The output file where to store / update versions'
+    required: true
+    default: 'versions'
+  project-name:
+    description: 'Module name'
+    required: true
+  tag:
+    description: 'Module version tag'
+    required: true
+  sha:
+    description: 'Module version commit hash'
+    required: true
+  url:
+    description: 'Module repository url'
+    required: true
+
+outputs:
+  file-content:
+    description: 'File content'
+    value: ${{ steps.create-update-file.outputs.file-content }}
+
+runs:
+
+  using: "composite"
+  steps:
+    - name: Update versions file
+      run: python ${{ github.action_path }}/scripts/versions-updater.py $OUTPUT_FILE $PROJECT_NAME $TAG $SHA $URL
+      shell: bash
+      env:
+        OUTPUT_FILE: ${{inputs.output-file}}
+        PROJECT_NAME: ${{inputs.project-name}}
+        TAG: ${{inputs.tag}}
+        SHA: ${{inputs.sha}}
+        URL: ${{inputs.url}}
